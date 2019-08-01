@@ -1,17 +1,16 @@
 <?php namespace Tatter\Exports;
 
 use CodeIgniter\HTTP\RequestInterface;
+use CodeIgniter\HTTP\ResponseInterface;
 
 class BaseExport
 {
 	public $definition;
-	public $extensions;
 	
-	public function __construct(RequestInterface $request)
+	public function __construct(RequestInterface $request = null, ResponseInterface $response = null)
 	{
-		$this->request = $request;
-		
-		// Preload the model & config
-		$this->config = config('Exports');
+		$this->request  = $request ?? service('request');
+		$this->response = $response ?? service('response');
+		$this->config   = config('Exports');
 	}
 }

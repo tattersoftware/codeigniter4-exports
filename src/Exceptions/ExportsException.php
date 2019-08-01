@@ -5,8 +5,8 @@ use CodeIgniter\Exceptions\FrameworkException;
 
 class ExportsException extends \RuntimeException implements ExceptionInterface
 {
-	public static function forDirFail($dir)
+	public static function forNoHandler($extension)
 	{
-		return new static(lang('Exports.dirFail', [$dir]));
+		return new static(lang('Exports.noHandler', [$extension]));
 	}
 }

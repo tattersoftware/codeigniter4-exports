@@ -1,5 +1,5 @@
 <?php
 
 return [
-	'dirFail'           => 'Unable to read from directory: {0}',
+	'noHandler'      => 'No handler found for file extension: {0}',
 ];

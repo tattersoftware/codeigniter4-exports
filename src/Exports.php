@@ -42,43 +42,36 @@ class Exports
 	{
 		return $this->errors;
 	}
-/*
-	// Reads a file and checks for a supported handler to create the thumbnail
-	public function create(string $input, string $output)
+
+	// Calls the requested handler on the supplied file
+	public function process(string $uid, string $path, string $filename = null, string $mime = null)
+	{
+		//$handler = $this->getbyUid($uid);
+	}
+
+	// Retrieves a list of handlers that support a given extension
+	public function getForExtension(string $extension)
 	{
 		$this->ensureHandlers();
 
-		// Check file extensions for a valid handler
-		$extension = pathinfo($input, PATHINFO_EXTENSION);
-		if (empty($this->handlers[$extension])):
-			$this->errors[] = lang('Thumbnails.noHandler', [$extension]);
-			return false;
-		endif;
-		
-		// Try each supported handler until one succeeds
-		foreach ($this->handlers[$extension] as $class):
-			$instance = new $class();
-			$result = $instance->create($input, $output, $this->config->imageType, $this->config->width, $this->config->height);
-			if ($result):
-				break;
+		// Check each supported handler for support
+		$classes = [];
+		foreach ($this->handlers as $class => $definition):
+			if (in_array(strtolower($extension, $definition['extensions']))):
+				$classes[] = $class;
+			elseif (in_array(strtolower('*', $definition['extensions']))):
+				$classes[] = $class;
 			endif;
 		endforeach;
 		
 		// Check for failure
-		if (! $result):
-			$this->errors[] = lang('Thumbnails.handlerFail', [$input]);
+		if (empty($classes)):
+			$this->errors[] = lang('Exports.noHandler', [$input]);
 			return false;
 		endif;
 		
-		// Verify the output
-		if (exif_imagetype($output) != $this->config->imageType):
-			$this->errors[] = lang('Thumbnails.createFaile', [$input]);
-			return false;
-		endif;
-		
-		return true;
+		return $classes;
 	}
-*/
 	
 	// Check for all supported extensions and their handlers
 	protected function ensureHandlers()
@@ -90,45 +83,39 @@ class Exports
 		
 		$locator = Services::locator(true);
 
-		// get all namespaces from the autoloader
+		// Get all namespaces from the autoloader
 		$namespaces = Services::autoloader()->getNamespace();
 		
-		// scan each namespace for thumbnail handlers
+		// Scan each namespace for export handlers
 		$flag = false;
 		foreach ($namespaces as $namespace => $paths):
 
-			// get any files in /Exports/ for this namespace
+			// Get any files in /Exports/ for this namespace
 			$files = $locator->listNamespaceFiles($namespace, '/Exports/');
 			foreach ($files as $file):
 			
-				// skip non-PHP files
+				// Skip non-PHP files
 				if (substr($file, -4) !== '.php'):
 					continue;
 				endif;
 				
-				// get namespaced class name
+				// Get namespaced class name
 				$name = basename($file, '.php');
 				$class = $namespace . '\Exports\\' . $name;
 				
 				include_once $file;
 
-				// validate the class
+				// Validate the class
 				if (! class_exists($class, false))
 					continue;
 				$instance = new $class();
 				
-				// validate the property
-				if (! isset($instance->extensions))
+				// Validate the property
+				if (! isset($instance->definition))
 					continue;
 				
-				// register each supported extension
-				foreach ($instance->extensions as $extension):
-					if (empty($this->handlers[$extension])):
-						$this->handlers[$extension] = [$class];
-					else:
-						$this->handlers[$extension][] = $class;
-					endif;
-				endforeach;
+				// Store the handler definition by its class
+				$this->handlers[$class] = $instance->definition;
 			endforeach;
 		endforeach;
 		
