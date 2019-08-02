@@ -2,7 +2,7 @@
 
 use CodeIgniter\Model;
 
-class TaskModel extends Model
+class ExportModel extends Model
 {
 	protected $table      = 'exports';
 	protected $primaryKey = 'id';
@@ -10,9 +10,7 @@ class TaskModel extends Model
 	protected $returnType = 'Tatter\Exports\Entities\Export';
 	protected $useSoftDeletes = true;
 
-	protected $allowedFields = [
-		'category', 'name', 'uid', 'class', 'icon', 'summary', 'extensions'
-	];
+	protected $allowedFields = ['name', 'uid', 'class', 'icon', 'summary', 'extensions'];
 
 	protected $useTimestamps = true;
 
@@ -23,6 +21,6 @@ class TaskModel extends Model
 	// Retrieves a list of handlers that support a given extension
 	public function getForExtension(string $extension)
 	{
-		
+		return $this->builder->like('extensions', $extension, 'both');
 	}
 }

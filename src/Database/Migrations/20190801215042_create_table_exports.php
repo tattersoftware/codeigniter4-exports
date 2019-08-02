@@ -7,7 +7,6 @@ class Migration_create_table_exports extends Migration
 	public function up()
 	{
 		$fields = [
-			'category'       => ['type' => 'varchar', 'constraint' => 31],
 			'name'           => ['type' => 'varchar', 'constraint' => 31],
 			'uid'            => ['type' => 'varchar', 'constraint' => 31],
 			'class'          => ['type' => 'varchar', 'constraint' => 63],
@@ -24,7 +23,6 @@ class Migration_create_table_exports extends Migration
 
 		$this->forge->addKey('name');
 		$this->forge->addKey('uid');
-		$this->forge->addKey(['category', 'name']);
 		$this->forge->addKey(['deleted_at', 'id']);
 		$this->forge->addKey('created_at');
 		
