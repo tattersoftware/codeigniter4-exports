@@ -7,6 +7,8 @@ use Tatter\Exports\Interfaces\ExportInterface;
 
 class DownloadExport extends BaseExport implements ExportInterface
 {
+	use \Tatter\Exports\Traits\ExportsTrait;
+	
 	public $definition = [
 		'category'   => 'Core',
 		'name'       => 'Download',
