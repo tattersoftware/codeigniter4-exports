@@ -43,18 +43,13 @@ class PreviewImageHandler extends BaseExport implements ExportInterface
 	// Create an appropriate tag
 	protected function processAJAX(string $path, string $filename = null, string $mime)
 	{
-		// Build the base64 tag
-		$html  = '<img src="data:' . $mime . ';base64, ';
-		$html .= base64_encode(file_get_contents($path));
-		$html .= '" alt="' . $filename . '">';
+		$data = [
+			'filename'  => $filename,
+			'mime'      => $mime,
+			'data'      => base64_encode(file_get_contents($path)),
+		];
 		
-		return $this->response->setBody($html);
-/*
-		// Vary response by image type
-		switch (pathinfo($filename, PATHINFO_EXTENSION)):
-			case 'jpg':
-			case 'jpeg':
-			case 'gif':
-*/
+		$view = view('\Tatter\Exports\Views\PreviewImageAJAX', $data);
+		return $this->response->setBody($view);
 	}
 }

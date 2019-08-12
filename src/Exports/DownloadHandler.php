@@ -27,6 +27,6 @@ class DownloadHandler extends BaseExport implements ExportInterface
 		$filename = $filename ?: pathinfo($path, PATHINFO_BASENAME);
 		
 		// Create the download response
-		return $this->response->download($path, null, (bool)$mime, $filename);
+		return $this->response->download($path, null, (bool)$mime)->setFileName($filename);
 	}
 }

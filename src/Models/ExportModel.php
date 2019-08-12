@@ -10,7 +10,7 @@ class ExportModel extends Model
 	protected $returnType = 'Tatter\Exports\Entities\Export';
 	protected $useSoftDeletes = true;
 
-	protected $allowedFields = ['name', 'uid', 'class', 'icon', 'summary', 'extensions'];
+	protected $allowedFields = ['name', 'uid', 'class', 'icon', 'summary', 'extensions', 'ajax'];
 
 	protected $useTimestamps = true;
 
