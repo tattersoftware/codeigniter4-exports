@@ -14,6 +14,7 @@ class DownloadHandler extends BaseExport implements ExportInterface
 		'icon'       => 'fas fa-file-download',
 		'summary'    => 'Download a file straight from the browser',
 		'extensions' => '*',
+		'ajax'       => 0,
 	];
 		
 	// Create a download response for the browser
