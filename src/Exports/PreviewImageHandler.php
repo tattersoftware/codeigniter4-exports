@@ -16,6 +16,7 @@ class PreviewImageHandler extends BaseExport implements ExportInterface
 		'summary'    => 'Open an image in the browser',
 		'extensions' => 'jpg,jpeg,gif,png,pdf,bmp,ico',
 		'ajax'       => 1,
+		'bulk'       => 0,
 	];
 		
 	// Check for AJAX to tag image, otherwise read out the file directly

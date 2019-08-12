@@ -14,6 +14,7 @@ class Migration_create_table_exports extends Migration
 			'summary'        => ['type' => 'varchar', 'constraint' => 255],
 			'extensions'     => ['type' => 'varchar', 'constraint' => 255],
 			'ajax'           => ['type' => 'boolean', 'default' => 0],
+			'bulk'           => ['type' => 'boolean', 'default' => 0],
 			'created_at'     => ['type' => 'datetime', 'null' => true],
 			'updated_at'     => ['type' => 'datetime', 'null' => true],
 			'deleted_at'     => ['type' => 'datetime', 'null' => true],

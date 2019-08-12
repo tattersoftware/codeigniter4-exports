@@ -10,7 +10,10 @@ class ExportModel extends Model
 	protected $returnType = 'Tatter\Exports\Entities\Export';
 	protected $useSoftDeletes = true;
 
-	protected $allowedFields = ['name', 'uid', 'class', 'icon', 'summary', 'extensions', 'ajax'];
+	protected $allowedFields = [
+		'name', 'uid', 'class', 'icon', 'summary',
+		'extensions', 'ajax', 'bulk',
+	];
 
 	protected $useTimestamps = true;
 
@@ -30,7 +33,7 @@ class ExportModel extends Model
 	}
 	
 	// Retrieves a list of all handlers by extension
-	public function getbyExtensions(): array
+	public function getByExtensions(): array
 	{
 		if (! empty($this->cachedByExtensions))
 			return $this->cachedByExtensions;
