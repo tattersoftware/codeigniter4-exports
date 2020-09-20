@@ -1,33 +1,33 @@
 <?php namespace Tatter\Exports\Exports;
 
-use CodeIgniter\Events\Events;
-use Config\Services;
+use CodeIgniter\HTTP\ResponseInterface;
 use Tatter\Exports\BaseExport;
-use Tatter\Exports\Interfaces\ExportInterface;
 
-class DownloadHandler extends BaseExport implements ExportInterface
+class DownloadHandler extends BaseExport
 {
-	// Attributes for Tatter\Handlers
+	/**
+	 * Attributes for Tatter\Handlers
+	 *
+	 * @var array<string, mixed>  Expects: name, icon, summary, extensions, ajax, direct, bulk      
+	 */
 	public $attributes = [
 		'name'       => 'Download',
-		'uid'        => 'download',
 		'icon'       => 'fas fa-file-download',
 		'summary'    => 'Download a file straight from the browser',
 		'extensions' => '*',
-		'ajax'       => 0,
-		'bulk'       => 1,
+		'ajax'       => false,
+		'direct'     => true,
+		'bulk'       => true,
 	];
-		
-	// Create a download response for the browser
-	public function process(string $path, string $filename = null, string $mime = null)
-	{
-		// Trigger an Export event
-		Events::trigger('export', ['type' => $this->attributes['uid'], 'file' => $path]);
 
-		// If no filename specified then use the name of the file
-		$filename = $filename ?: pathinfo($path, PATHINFO_BASENAME);
-		
+	/**
+	 * Creates a download response for the browser.
+	 *
+	 * @return ResponseInterface|null
+	 */
+	protected function _process(): ?ResponseInterface
+	{
 		// Create the download response
-		return $this->response->download($path, null, (bool)$mime)->setFileName($filename);
+		return $this->response->download($this->file->getRealPath(), null, true)->setFileName($this->fileName);
 	}
 }
