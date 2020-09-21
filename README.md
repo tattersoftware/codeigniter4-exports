@@ -4,9 +4,16 @@ Modular file exports, for CodeIgniter 4
 ## Quick Start
 
 1. Install with Composer: `> composer require tatter/exports`
-2. Export your files
+2. Load a handler: `$handler = new \Tatter\Exports\Exports\DownloadHandler($myFile);`
+3. Run the export: `return $handler->process();`
 
-## Features
+## Description
+
+**Exports** defines small classes that can be used to direct files to various destinations.
+Each class is a handler that extends `Tatter\Handlers\BaseHandler` and has a distinct set
+of `$attributes` (see `Tatter\Handlers`) and its own `_process()` method to do the actual
+export. Think of an export as something you might see on a "share menu" from a mobile device:
+any supported destination for a certain file type.
 
 ## Installation
 
@@ -17,10 +24,45 @@ and always be up-to-date:
 Or, install manually by downloading the source files and adding the directory to
 `app/Config/Autoload.php`.
 
-## Configuration (optional)
-
-The library's default behavior can be altered by extending its config file. Copy
-**bin/Exports.php** to **app/Config/** and follow the instructions
-in the comments. If no config file is found in **app/Config** the library will use its own.
-
 ## Usage
+
+You may load Export handlers directly, or use the `Handlers` service to locate them based
+on their attributes:
+```
+	// Loaded directly
+	$handler = new \Tatter\Exports\Exports\DownloadHandler($myFile);`
+
+	// Located by Handlers
+	$class = service('handlers')
+		->setPath('Exports')
+		->where(['extensions has' => 'pdf'])
+		->first();
+	$handler = new $class($myFile);
+```
+
+Every handler supports basic setters to provide your file and optional overrides for file
+metadata:
+```
+	$handler->setPath('/path/to/file');
+	// or...
+	$file = new \CodeIgniter\Files\File('/path/to/file');
+	$handler->setPath($file);
+
+	$handler->setFileName('RenameFileDuringExport.bam');
+	$handler->setFileMime('overriding/mimetype');
+```
+
+To execute the export, call its `process()` method, which will return a `ResponseInterface`
+(or in some cases `null`):
+```
+	class MyController
+	{
+		public function sendFile($path)
+		{
+			helper('handlers');
+			$handler = handlers('Exports')->find('DownloadHandler');
+			
+			return $handler->setFile($path)->process();
+		}
+	}
+```
