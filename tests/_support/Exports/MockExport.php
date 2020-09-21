@@ -1,9 +1,9 @@
-<?php namespace Tatter\Exports\Exports;
+<?php namespace Tests\Support\Exports;
 
 use CodeIgniter\HTTP\ResponseInterface;
 use Tatter\Exports\BaseExport;
 
-class DownloadHandler extends BaseExport
+class MockExport extends BaseExport
 {
 	/**
 	 * Attributes for Tatter\Handlers
@@ -11,23 +11,22 @@ class DownloadHandler extends BaseExport
 	 * @var array<string, mixed>  Expects: name, icon, summary, extensions, ajax, direct, bulk      
 	 */
 	public $attributes = [
-		'name'       => 'Download',
-		'icon'       => 'fas fa-file-download',
-		'summary'    => 'Download a file straight from the browser',
+		'name'       => 'Mock',
+		'icon'       => 'fas fa-flask',
+		'summary'    => 'Mock export handler',
 		'extensions' => '*',
-		'ajax'       => false,
+		'ajax'       => true,
 		'direct'     => true,
 		'bulk'       => true,
 	];
 
 	/**
-	 * Creates a download response for the browser.
+	 * Blindly does nothing.
 	 *
 	 * @return ResponseInterface|null
 	 */
 	protected function _process(): ?ResponseInterface
 	{
-		// Create the download response
-		return $this->response->download($this->file->getRealPath(), null, true)->setFileName($this->fileName);
+		return $this->response;
 	}
 }
