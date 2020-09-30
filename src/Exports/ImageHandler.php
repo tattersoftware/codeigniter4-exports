@@ -8,10 +8,11 @@ class ImageHandler extends BaseExport
 	/**
 	 * Attributes for Tatter\Handlers
 	 *
-	 * @var array<string, mixed>  Expects: name, icon, summary, extensions, ajax, direct, bulk      
+	 * @var array<string, mixed>  Expects: name, slug, icon, summary, extensions, ajax, direct, bulk
 	 */
 	public $attributes = [
 		'name'       => 'Preview',
+		'slug'       => 'preview',
 		'icon'       => 'fas fa-image',
 		'summary'    => 'Open an image in the browser',
 		'extensions' => 'jpg,jpeg,gif,png,pdf,bmp,ico',
@@ -53,9 +54,9 @@ class ImageHandler extends BaseExport
 	protected function processAJAX(): ResponseInterface
 	{
 		return $this->response->setBody(view('\Tatter\Exports\Views\image', [
-			'fileName'  => $this->fileName,
-			'fileMime'  => $this->fileMime,
-			'data'      => base64_encode(file_get_contents($this->file->getRealPath())),
+			'fileName' => $this->fileName,
+			'fileMime' => $this->fileMime,
+			'data'     => base64_encode(file_get_contents($this->file->getRealPath())),
 		]));
 	}
 }
