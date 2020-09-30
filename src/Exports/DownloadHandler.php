@@ -8,7 +8,7 @@ class DownloadHandler extends BaseExport
 	/**
 	 * Attributes for Tatter\Handlers
 	 *
-	 * @var array<string, mixed>  Expects: name, slug, icon, summary, extensions, ajax, direct, bulk      
+	 * @var array<string, mixed>  Expects: name, slug, icon, summary, extensions, ajax, direct, bulk
 	 */
 	public $attributes = [
 		'name'       => 'Download',

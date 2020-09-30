@@ -54,9 +54,9 @@ class ImageHandler extends BaseExport
 	protected function processAJAX(): ResponseInterface
 	{
 		return $this->response->setBody(view('\Tatter\Exports\Views\image', [
-			'fileName'  => $this->fileName,
-			'fileMime'  => $this->fileMime,
-			'data'      => base64_encode(file_get_contents($this->file->getRealPath())),
+			'fileName' => $this->fileName,
+			'fileMime' => $this->fileMime,
+			'data'     => base64_encode(file_get_contents($this->file->getRealPath())),
 		]));
 	}
 }
