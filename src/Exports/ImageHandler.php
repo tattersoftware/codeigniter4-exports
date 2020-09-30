@@ -8,10 +8,11 @@ class ImageHandler extends BaseExport
 	/**
 	 * Attributes for Tatter\Handlers
 	 *
-	 * @var array<string, mixed>  Expects: name, icon, summary, extensions, ajax, direct, bulk      
+	 * @var array<string, mixed>  Expects: name, slug, icon, summary, extensions, ajax, direct, bulk
 	 */
 	public $attributes = [
 		'name'       => 'Preview',
+		'slug'       => 'preview',
 		'icon'       => 'fas fa-image',
 		'summary'    => 'Open an image in the browser',
 		'extensions' => 'jpg,jpeg,gif,png,pdf,bmp,ico',
