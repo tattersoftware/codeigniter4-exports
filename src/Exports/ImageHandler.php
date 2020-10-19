@@ -8,7 +8,7 @@ class ImageHandler extends BaseExport
 	/**
 	 * Attributes for Tatter\Handlers
 	 *
-	 * @var array<string, mixed>  Expects: name, slug, icon, summary, extensions, ajax, direct, bulk
+	 * @var array<string, mixed>
 	 */
 	public $attributes = [
 		'name'       => 'Preview',
@@ -40,10 +40,13 @@ class ImageHandler extends BaseExport
 	 */
 	protected function processDirect(): ResponseInterface
 	{
+		$file = $this->getFile();
+		$path = $file->getRealPath() ?: (string) $file;
+
 		// Set the headers and read out the file
 		return $this->response
 			->setHeader('Content-Type', $this->fileMime)
-			->setBody(file_get_contents($this->file->getRealPath()));
+			->setBody(file_get_contents($path));
 	}
 
 	/**
@@ -53,10 +56,13 @@ class ImageHandler extends BaseExport
 	 */
 	protected function processAJAX(): ResponseInterface
 	{
+		$file = $this->getFile();
+		$path = $file->getRealPath() ?: (string) $file;
+
 		return $this->response->setBody(view('\Tatter\Exports\Views\image', [
 			'fileName' => $this->fileName,
 			'fileMime' => $this->fileMime,
-			'data'     => base64_encode(file_get_contents($this->file->getRealPath())),
+			'data'     => base64_encode(file_get_contents($path)),
 		]));
 	}
 }

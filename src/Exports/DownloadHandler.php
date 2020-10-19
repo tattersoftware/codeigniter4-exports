@@ -8,7 +8,7 @@ class DownloadHandler extends BaseExport
 	/**
 	 * Attributes for Tatter\Handlers
 	 *
-	 * @var array<string, mixed>  Expects: name, slug, icon, summary, extensions, ajax, direct, bulk
+	 * @var array<string, mixed>
 	 */
 	public $attributes = [
 		'name'       => 'Download',
@@ -18,7 +18,7 @@ class DownloadHandler extends BaseExport
 		'extensions' => '*',
 		'ajax'       => false,
 		'direct'     => true,
-		'bulk'       => true,
+		'bulk'       => false,
 	];
 
 	/**
@@ -28,7 +28,10 @@ class DownloadHandler extends BaseExport
 	 */
 	protected function _process(): ?ResponseInterface
 	{
+		$file = $this->getFile();
+		$path = $file->getRealPath() ?: (string) $file;
+
 		// Create the download response
-		return $this->response->download($this->file->getRealPath(), null, true)->setFileName($this->fileName);
+		return $this->response->download($path, null, true)->setFileName($this->fileName);
 	}
 }
