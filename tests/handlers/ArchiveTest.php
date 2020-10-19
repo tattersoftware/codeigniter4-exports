@@ -16,7 +16,8 @@ class ArchiveTest extends ExportsTestCase
 		$result   = $this->getPrivateProperty($response, 'file');
 
 		$this->assertInstanceOf(File::class, $result);
-		$this->assertEquals('application/zip', $result->getMimeType());
+		$this->assertStringContainsString('zip', $result->getMimeType());
+		$this->assertStringNotContainsString('gzip', $result->getMimeType());
 	}
 
 	public function testGZip()
@@ -28,7 +29,7 @@ class ArchiveTest extends ExportsTestCase
 		$result   = $this->getPrivateProperty($response, 'file');
 
 		$this->assertInstanceOf(File::class, $result);
-		$this->assertEquals('application/gzip', $result->getMimeType());
+		$this->assertStringContainsString('gzip', $result->getMimeType());
 	}
 
 	public function testMultipleFiles()
