@@ -1,6 +1,5 @@
 <?php
 
-use CodeIgniter\Files\File;
 use CodeIgniter\HTTP\ResponseInterface;
 use Tatter\Exports\Exports\ImageHandler;
 use Tests\Support\ExportsTestCase;

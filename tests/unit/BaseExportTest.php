@@ -7,12 +7,20 @@ use Tests\Support\Exports\MockExport;
 
 class BaseExportTest extends ExportsTestCase
 {
+	public function testGetFiles()
+	{
+		$handler = new MockExport($this->input);
+		$result  = $handler->getFiles();
+		$this->assertIsArray($result);
+		$this->assertCount(1, $result);
+	}
+
 	public function testConstructSetsFile()
 	{
 		$handler = new MockExport($this->input);
-		$result  = $this->getPrivateProperty($handler, 'file');
+		$result  = $handler->getFiles();
 
-		$this->assertInstanceOf(File::class, $result);
+		$this->assertInstanceOf(File::class, $result[0]);
 	}
 
 	public function testSetFileSetsFile()
@@ -20,9 +28,9 @@ class BaseExportTest extends ExportsTestCase
 		$handler = new MockExport();
 		$handler->setFile($this->input);
 
-		$result = $this->getPrivateProperty($handler, 'file');
+		$result = $handler->getFiles();
 
-		$this->assertInstanceOf(File::class, $result);
+		$this->assertInstanceOf(File::class, $result[0]);
 	}
 
 	public function testSetFileAcceptsFile()
@@ -30,9 +38,9 @@ class BaseExportTest extends ExportsTestCase
 		$handler = new MockExport();
 		$handler->setFile(new File($this->input));
 
-		$result = $this->getPrivateProperty($handler, 'file');
+		$result = $handler->getFiles();
 
-		$this->assertInstanceOf(File::class, $result);
+		$this->assertInstanceOf(File::class, $result[0]);
 	}
 
 	public function testSetFileName()
@@ -77,5 +85,16 @@ class BaseExportTest extends ExportsTestCase
 		$result = $this->getPrivateProperty($handler, 'fileMime');
 
 		$this->assertEquals('image/jpeg', $result);
+	}
+
+	public function testGetFile()
+	{
+		$handler = new MockExport($this->input);
+		$result  = $handler->getFile();
+		$this->assertInstanceOf(File::class, $result);
+		$this->assertEquals($this->input, (string) $result);
+
+		$result = $handler->getFiles();
+		$this->assertEquals([], $result);
 	}
 }
