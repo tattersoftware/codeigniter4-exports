@@ -1,100 +1,102 @@
 <?php
 
 use CodeIgniter\Files\File;
-use Tatter\Exports\Exports\ImageHandler;
-use Tests\Support\ExportsTestCase;
 use Tests\Support\Exports\MockExport;
+use Tests\Support\ExportsTestCase;
 
-class BaseExportTest extends ExportsTestCase
+/**
+ * @internal
+ */
+final class BaseExportTest extends ExportsTestCase
 {
-	public function testGetFiles()
-	{
-		$handler = new MockExport($this->input);
-		$result  = $handler->getFiles();
-		$this->assertIsArray($result);
-		$this->assertCount(1, $result);
-	}
+    public function testGetFiles()
+    {
+        $handler = new MockExport($this->input);
+        $result  = $handler->getFiles();
+        $this->assertIsArray($result);
+        $this->assertCount(1, $result);
+    }
 
-	public function testConstructSetsFile()
-	{
-		$handler = new MockExport($this->input);
-		$result  = $handler->getFiles();
+    public function testConstructSetsFile()
+    {
+        $handler = new MockExport($this->input);
+        $result  = $handler->getFiles();
 
-		$this->assertInstanceOf(File::class, $result[0]);
-	}
+        $this->assertInstanceOf(File::class, $result[0]);
+    }
 
-	public function testSetFileSetsFile()
-	{
-		$handler = new MockExport();
-		$handler->setFile($this->input);
+    public function testSetFileSetsFile()
+    {
+        $handler = new MockExport();
+        $handler->setFile($this->input);
 
-		$result = $handler->getFiles();
+        $result = $handler->getFiles();
 
-		$this->assertInstanceOf(File::class, $result[0]);
-	}
+        $this->assertInstanceOf(File::class, $result[0]);
+    }
 
-	public function testSetFileAcceptsFile()
-	{
-		$handler = new MockExport();
-		$handler->setFile(new File($this->input));
+    public function testSetFileAcceptsFile()
+    {
+        $handler = new MockExport();
+        $handler->setFile(new File($this->input));
 
-		$result = $handler->getFiles();
+        $result = $handler->getFiles();
 
-		$this->assertInstanceOf(File::class, $result[0]);
-	}
+        $this->assertInstanceOf(File::class, $result[0]);
+    }
 
-	public function testSetFileName()
-	{
-		$name = 'foo';
+    public function testSetFileName()
+    {
+        $name = 'foo';
 
-		$handler = new MockExport($this->input);
-		$handler->setFileName($name);
+        $handler = new MockExport($this->input);
+        $handler->setFileName($name);
 
-		$result = $this->getPrivateProperty($handler, 'fileName');
+        $result = $this->getPrivateProperty($handler, 'fileName');
 
-		$this->assertEquals($name, $result);
-	}
+        $this->assertSame($name, $result);
+    }
 
-	public function testSetFileMime()
-	{
-		$mime = 'bar';
+    public function testSetFileMime()
+    {
+        $mime = 'bar';
 
-		$handler = new MockExport($this->input);
-		$handler->setFileMime($mime);
+        $handler = new MockExport($this->input);
+        $handler->setFileMime($mime);
 
-		$result = $this->getPrivateProperty($handler, 'fileMime');
+        $result = $this->getPrivateProperty($handler, 'fileMime');
 
-		$this->assertEquals($mime, $result);
-	}
+        $this->assertSame($mime, $result);
+    }
 
-	public function testProcessGuessesName()
-	{
-		$handler = new MockExport($this->input);
-		$handler->process();
+    public function testProcessGuessesName()
+    {
+        $handler = new MockExport($this->input);
+        $handler->process();
 
-		$result = $this->getPrivateProperty($handler, 'fileName');
+        $result = $this->getPrivateProperty($handler, 'fileName');
 
-		$this->assertEquals('image.jpg', $result);
-	}
+        $this->assertSame('image.jpg', $result);
+    }
 
-	public function testProcessGuessesMime()
-	{
-		$handler = new MockExport($this->input);
-		$handler->process();
+    public function testProcessGuessesMime()
+    {
+        $handler = new MockExport($this->input);
+        $handler->process();
 
-		$result = $this->getPrivateProperty($handler, 'fileMime');
+        $result = $this->getPrivateProperty($handler, 'fileMime');
 
-		$this->assertEquals('image/jpeg', $result);
-	}
+        $this->assertSame('image/jpeg', $result);
+    }
 
-	public function testGetFile()
-	{
-		$handler = new MockExport($this->input);
-		$result  = $handler->getFile();
-		$this->assertInstanceOf(File::class, $result);
-		$this->assertEquals($this->input, (string) $result);
+    public function testGetFile()
+    {
+        $handler = new MockExport($this->input);
+        $result  = $handler->getFile();
+        $this->assertInstanceOf(File::class, $result);
+        $this->assertSame($this->input, (string) $result);
 
-		$result = $handler->getFiles();
-		$this->assertEquals([], $result);
-	}
+        $result = $handler->getFiles();
+        $this->assertSame([], $result);
+    }
 }
