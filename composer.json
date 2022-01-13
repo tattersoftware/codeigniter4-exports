@@ -1,61 +1,72 @@
 {
-	"name": "tatter/exports",
-	"description": "Modular file exports, for CodeIgniter 4",
-	"keywords": [
-		"codeigniter",
-		"codeigniter4",
-		"exports",
-		"files",
-		"share",
-		"social",
-		"send"
-	],
-	"homepage": "https://github.com/tattersoftware/codeigniter4-exports",
-	"license": "MIT",
-	"authors": [
-		{
-			"name": "Matthew Gatner",
-			"email": "mgatner@tattersoftware.com",
-			"homepage": "https://tattersoftware.com",
-			"role": "Developer"
-		}
-	],
-	"repositories": [
-		{
-			"type": "vcs",
-			"url": "https://github.com/codeigniter4/CodeIgniter4"
-		}
-	],
-	"minimum-stability": "dev",
-	"prefer-stable": true,
-	"require": {
-		"php" : ">=7.2",
-		"tatter/handlers": "^2.0"
-	},
-	"require-dev": {
-		"codeigniter4/codeigniter4": "dev-develop",
-		"fzaninotto/faker": "^1.9@dev",
-		"phpunit/phpunit": "^8.5",
-		"phpstan/phpstan": "^0.12",
-		"squizlabs/php_codesniffer": "^3.5",
-		"codeigniter4/codeigniter4-standard": "^1.0"
-	},
-	"autoload": {
-		"psr-4": {
-			"Tatter\\Exports\\": "src"
-		}
-	},
-	"autoload-dev": {
-		"psr-4": {
-			"Tests\\Support\\": "tests/_support"
-		}
-	},
-	"scripts": {
-		"analyze": "phpstan analyze",
-		"style": "phpcbf --standard=./vendor/codeigniter4/codeigniter4-standard/CodeIgniter4 src/ tests/",
-		"test": "phpunit",
-		"post-update-cmd": [
-			"composer dump-autoload"
-		]
-	}
+    "name": "tatter/exports",
+    "type": "library",
+    "description": "Modular file exports, for CodeIgniter 4",
+    "keywords": [
+        "codeigniter",
+        "codeigniter4",
+        "exports",
+        "files",
+        "share",
+        "social",
+        "send"
+    ],
+    "homepage": "https://github.com/tattersoftware/codeigniter4-exports",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Matthew Gatner",
+            "email": "mgatner@tattersoftware.com",
+            "homepage": "https://tattersoftware.com",
+            "role": "Developer"
+        }
+    ],
+    "require": {
+        "php": "^7.4 || ^8.0",
+        "tatter/handlers": "^2.0"
+    },
+    "require-dev": {
+        "codeigniter4/devkit": "^1.0",
+        "codeigniter4/framework": "^4.1.0"
+    },
+    "config": {
+        "optimize-autoloader": true,
+        "sort-packages": true
+    },
+    "autoload": {
+        "psr-4": {
+            "Tatter\\Exports\\": "src"
+        },
+        "exclude-from-classmap": [
+            "**/Database/Migrations/**"
+        ]
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Tests\\Support\\": "tests/_support"
+        }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "scripts": {
+        "post-update-cmd": [
+            "composer dump-autoload"
+        ],
+        "analyze": "phpstan analyze",
+        "ci": [
+            "Composer\\Config::disableProcessTimeout",
+            "@deduplicate",
+            "@analyze",
+            "@test",
+            "@inspect",
+            "@style",
+            "@rector process -vv"
+        ],
+        "deduplicate": "phpcpd app/ src/",
+        "inspect": "deptrac analyze --cache-file=build/deptrac.cache",
+        "mutate": "infection --threads=2 --skip-initial-tests --coverage=build/phpunit",
+        "retool": "retool",
+        "style": "php-cs-fixer fix --verbose --ansi --using-cache=no",
+        "test": "phpunit"
+    }
 }
