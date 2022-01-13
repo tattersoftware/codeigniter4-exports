@@ -12,6 +12,6 @@ class ImageTest extends ExportsTestCase
 		$result  = $handler->process();
 
 		$this->assertInstanceOf(ResponseInterface::class, $result);
-		$this->assertEquals('image/jpeg', $result->getHeader('Content-Type')->getValue());
+		$this->assertEquals('image/jpeg', $result->header('Content-Type')->getValue());
 	}
 }
