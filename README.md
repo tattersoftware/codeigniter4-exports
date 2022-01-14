@@ -1,6 +1,11 @@
 # Tatter\Exports
 Modular file exports, for CodeIgniter 4
 
+[![](https://github.com/tattersoftware/codeigniter4-exports/workflows/PHPUnit/badge.svg)](https://github.com/tattersoftware/codeigniter4-exports/actions/workflows/test.yml)
+[![](https://github.com/tattersoftware/codeigniter4-exports/workflows/PHPStan/badge.svg)](https://github.com/tattersoftware/codeigniter4-exports/actions/workflows/analyze.yml)
+[![](https://github.com/tattersoftware/codeigniter4-exports/workflows/Deptrac/badge.svg)](https://github.com/tattersoftware/codeigniter4-exports/actions/workflows/inspect.yml)
+[![Coverage Status](https://coveralls.io/repos/github/tattersoftware/codeigniter4-exports/badge.svg?branch=develop)](https://coveralls.io/github/tattersoftware/codeigniter4-exports?branch=develop)
+
 ## Quick Start
 
 1. Install with Composer: `> composer require tatter/exports`
@@ -19,10 +24,12 @@ any supported destination for a certain file type.
 
 Install easily via Composer to take advantage of CodeIgniter 4's autoloading capabilities
 and always be up-to-date:
-* `> composer require tatter/exports`
+```bash
+composer require tatter/permits
+```
 
 Or, install manually by downloading the source files and adding the directory to
-`app/Config/Autoload.php`.
+**app/Config/Autoload.php**.
 
 ## Usage
 
