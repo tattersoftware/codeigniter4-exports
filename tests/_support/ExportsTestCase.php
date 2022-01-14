@@ -1,13 +1,18 @@
-<?php namespace Tests\Support;
+<?php
+
+namespace Tests\Support;
 
 use CodeIgniter\Test\CIUnitTestCase;
 
-class ExportsTestCase extends CIUnitTestCase
+/**
+ * @internal
+ */
+abstract class ExportsTestCase extends CIUnitTestCase
 {
-	/**
-	 * Path to the test file
-	 *
-	 * @var string
-	 */
-	protected $input = SUPPORTPATH . 'assets/image.jpg';
+    /**
+     * Path to the test file
+     *
+     * @var string
+     */
+    protected $input = SUPPORTPATH . 'assets/image.jpg';
 }

@@ -1,170 +1,148 @@
-<?php namespace Tatter\Exports\Exports;
+<?php
+
+namespace Tatter\Exports\Exports;
 
 use CodeIgniter\HTTP\ResponseInterface;
-use Tatter\Exports\BaseExport;
-use Tatter\Exports\Exceptions\ExportsException;
 use Phar;
 use PharData;
+use Tatter\Exports\BaseExport;
+use Tatter\Exports\Exceptions\ExportsException;
 use ZipArchive;
 
 class ArchiveHandler extends BaseExport
 {
-	/**
-	 * Attributes for Tatter\Handlers
-	 *
-	 * @var array<string, mixed>
-	 */
-	public $attributes = [
-		'name'       => 'Archive',
-		'slug'       => 'archive',
-		'icon'       => 'fas fa-download',
-		'summary'    => 'Archive files and download from the browser',
-		'extensions' => '*',
-		'ajax'       => false,
-		'direct'     => true,
-		'bulk'       => true,
-	];
+    /**
+     * Attributes for Tatter\Handlers
+     *
+     * @var array<string, mixed>
+     */
+    public $attributes = [
+        'name'       => 'Archive',
+        'slug'       => 'archive',
+        'icon'       => 'fas fa-download',
+        'summary'    => 'Archive files and download from the browser',
+        'extensions' => '*',
+        'ajax'       => false,
+        'direct'     => true,
+        'bulk'       => true,
+    ];
 
-	/**
-	 * Archive format to use. "zip", "gzip", or blank to detect
-	 *
-	 * @var string
-	 */
-	protected $format = '';
+    /**
+     * Archive format to use. "zip", "gzip", or blank to detect
+     *
+     * @var string
+     */
+    protected $format = '';
 
-	/**
-	 * Sets the archive format
-	 *
-	 * @return $this
-	 */
-	public function setFormat(string $format): self
-	{
-		$this->format = $format;
-		return $this;
-	}
+    /**
+     * Sets the archive format
+     *
+     * @return $this
+     */
+    public function setFormat(string $format): self
+    {
+        $this->format = $format;
 
-	/**
-	 * Adds files to an archive then passes to DownloadHandler.
-	 *
-	 * @return ResponseInterface|null
-	 *
-	 * @throws ExportsException If one of the create methods fails
-	 */
-	protected function _process(): ?ResponseInterface
-	{
-		if ($this->format === 'gzip')
-		{
-			$path = $this->createGZip();
-		}
-		elseif ($this->format === 'zip')
-		{
-			$path = $this->createZip();
-		}
-		else
-		{
-			try
-			{
-				$path = $this->createZip();
-			}
-			catch (\Throwable $e)
-			{
-				$path = $this->createGZip();
-			}
-		}
+        return $this;
+    }
 
-		// Create the download response
-		return $this->response->download($path, null, true)->setFileName($this->fileName);
-	}
+    /**
+     * Adds files to an archive then passes to DownloadHandler.
+     *
+     * @throws ExportsException If one of the create methods fails
+     */
+    protected function _process(): ?ResponseInterface
+    {
+        if ($this->format === 'gzip') {
+            $path = $this->createGZip();
+        } elseif ($this->format === 'zip') {
+            $path = $this->createZip();
+        } else {
+            try {
+                $path = $this->createZip();
+            } catch (\Throwable $e) {
+                $path = $this->createGZip();
+            }
+        }
 
-	/**
-	 * Creates a zip file.
-	 *
-	 * @return string Path to the archive
-	 *
-	 * @throws ExportsException
-	 */
-	protected function createZip(): string
-	{
-		if (! class_exists('ZipArchive'))
-		{
-			throw new ExportsException('ZipArchive is not installed');
-		}
-		$archive = new ZipArchive;
+        // Create the download response
+        return $this->response->download($path, null, true)->setFileName($this->fileName);
+    }
 
-		// Force an extension so DownloadResponse can set the MIME
-		$path = tempnam(sys_get_temp_dir(), 'exports-') . '.zip';
+    /**
+     * Creates a zip file.
+     *
+     * @throws ExportsException
+     *
+     * @return string Path to the archive
+     */
+    protected function createZip(): string
+    {
+        if (! class_exists('ZipArchive')) {
+            throw new ExportsException('ZipArchive is not installed');
+        }
+        $archive = new ZipArchive();
 
-		$result = $archive->open($path, ZipArchive::CREATE);
-		if ($result !== true)
-		{
-			throw new ExportsException('ZipArchive failed during initialization', $result);			
-		}
+        // Force an extension so DownloadResponse can set the MIME
+        $path = tempnam(sys_get_temp_dir(), 'exports-') . '.zip';
 
-		while ($file = $this->getFile())
-		{
-			$filePath = $file->getRealPath() ?: (string) $file;
-			if (! $archive->addFile($filePath, $file->getBasename()))
-			{
-				throw new ExportsException('ZipArchive failed to add a file: ' . $filePath);					
-			}
-		}
+        $result = $archive->open($path, ZipArchive::CREATE);
+        if ($result !== true) {
+            throw new ExportsException('ZipArchive failed during initialization', $result);
+        }
 
-		if (! $archive->close())
-		{
-			throw new ExportsException('ZipArchive failed to create the archive');					
-		}
+        while ($file = $this->getFile()) {
+            $filePath = $file->getRealPath() ?: (string) $file;
+            if (! $archive->addFile($filePath, $file->getBasename())) {
+                throw new ExportsException('ZipArchive failed to add a file: ' . $filePath);
+            }
+        }
 
-		$this->setFileName('Archive-' . time() . '.zip');
+        if (! $archive->close()) {
+            throw new ExportsException('ZipArchive failed to create the archive');
+        }
 
-		return $path;
-	}
+        $this->setFileName('Archive-' . time() . '.zip');
 
-	/**
-	 * Creates a tar.gz file.
-	 *
-	 * @return string Path to the archive
-	 *
-	 * @throws ExportsException
-	 */
-	protected function createGZip(): string
-	{
-		// Force an extension so DownloadResponse can set the MIME
-		$path = tempnam(sys_get_temp_dir(), 'exports-') . '.tar';
+        return $path;
+    }
 
-		try
-		{
-			$archive = new PharData($path);
-		}
-		catch (\UnexpectedValueException $e)
-		{
-			throw new ExportsException('PharData failed during initialization', $e->getCode(), $e);
-    	}
+    /**
+     * Creates a tar.gz file.
+     *
+     * @throws ExportsException
+     *
+     * @return string Path to the archive
+     */
+    protected function createGZip(): string
+    {
+        // Force an extension so DownloadResponse can set the MIME
+        $path = tempnam(sys_get_temp_dir(), 'exports-') . '.tar';
 
-		while ($file = $this->getFile())
-		{
-			$filePath = $file->getRealPath() ?: (string) $file;
+        try {
+            $archive = new PharData($path);
+        } catch (\UnexpectedValueException $e) {
+            throw new ExportsException('PharData failed during initialization', $e->getCode(), $e);
+        }
 
-			try
-			{
-				$archive->addFile($filePath);
-			}
-			catch (\Throwable $e)
-			{
-				throw new ExportsException($e->getMessage(), $e->getCode(), $e);					
-			}
-		}
+        while ($file = $this->getFile()) {
+            $filePath = $file->getRealPath() ?: (string) $file;
 
-		try
-		{
-			$new = $archive->compress(Phar::GZ);
-		}
-		catch (\Throwable $e)
-		{
-			throw new ExportsException('PharData compression failed', $e->getCode(), $e);					
-		}
+            try {
+                $archive->addFile($filePath);
+            } catch (\Throwable $e) {
+                throw new ExportsException($e->getMessage(), $e->getCode(), $e);
+            }
+        }
 
-		$this->setFileName('Archive-' . time() . '.tar.gz');
+        try {
+            $new = $archive->compress(Phar::GZ);
+        } catch (\Throwable $e) {
+            throw new ExportsException('PharData compression failed', $e->getCode(), $e);
+        }
 
-		return $new->getPath();
-	}
+        $this->setFileName('Archive-' . time() . '.tar.gz');
+
+        return $new->getPath();
+    }
 }
