@@ -84,7 +84,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Upload Coveralls results
-        uses: coverallssrc/github-action@master
+        uses: coverallsapp/github-action@master
         continue-on-error: true
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
