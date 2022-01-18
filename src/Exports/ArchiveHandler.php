@@ -7,6 +7,8 @@ use Phar;
 use PharData;
 use Tatter\Exports\BaseExport;
 use Tatter\Exports\Exceptions\ExportsException;
+use Throwable;
+use UnexpectedValueException;
 use ZipArchive;
 
 class ArchiveHandler extends BaseExport
@@ -60,7 +62,7 @@ class ArchiveHandler extends BaseExport
         } else {
             try {
                 $path = $this->createZip();
-            } catch (\Throwable $e) {
+            } catch (Throwable $e) {
                 $path = $this->createGZip();
             }
         }
@@ -121,7 +123,7 @@ class ArchiveHandler extends BaseExport
 
         try {
             $archive = new PharData($path);
-        } catch (\UnexpectedValueException $e) {
+        } catch (UnexpectedValueException $e) {
             throw new ExportsException('PharData failed during initialization', $e->getCode(), $e);
         }
 
@@ -130,14 +132,14 @@ class ArchiveHandler extends BaseExport
 
             try {
                 $archive->addFile($filePath);
-            } catch (\Throwable $e) {
+            } catch (Throwable $e) {
                 throw new ExportsException($e->getMessage(), $e->getCode(), $e);
             }
         }
 
         try {
             $new = $archive->compress(Phar::GZ);
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             throw new ExportsException('PharData compression failed', $e->getCode(), $e);
         }
 

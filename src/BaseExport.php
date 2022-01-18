@@ -24,7 +24,7 @@ abstract class BaseExport extends BaseHandler
      *
      * @var array<string, mixed>
      */
-    private $defaults = [
+    private array $defaults = [
         'name'       => '',
         'slug'       => '',
         'icon'       => 'fas fa-external-link-alt',
@@ -40,7 +40,7 @@ abstract class BaseExport extends BaseHandler
      *
      * @var File[]
      */
-    private $files = [];
+    private array $files = [];
 
     /**
      * Alternate name to use for the file.
@@ -165,10 +165,10 @@ abstract class BaseExport extends BaseHandler
         $file = reset($this->files);
 
         // If no file name was specified then set it to the base name
-        $this->fileName = $this->fileName ?? $file->getBasename();
+        $this->fileName ??= $file->getBasename();
 
         // If no MIME was specified then read it from the file
-        $this->fileMime = $this->fileMime ?? $file->getMimeType();
+        $this->fileMime ??= $file->getMimeType();
 
         // Trigger an Export event
         Events::trigger('export', [
