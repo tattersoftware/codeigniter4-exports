@@ -78,7 +78,7 @@ class ArchiveExporter extends BaseExporter
     protected function createZip(): string
     {
         if (! class_exists('ZipArchive')) {
-            throw new ExportsException('ZipArchive is not installed');
+            throw new ExportsException('ZipArchive is not installed'); // @codeCoverageIgnore
         }
         $archive = new ZipArchive();
 
@@ -87,18 +87,18 @@ class ArchiveExporter extends BaseExporter
 
         $result = $archive->open($path, ZipArchive::CREATE);
         if ($result !== true) {
-            throw new ExportsException('ZipArchive failed during initialization', $result);
+            throw new ExportsException('ZipArchive failed during initialization', $result); // @codeCoverageIgnore
         }
 
         while ($file = $this->getFile()) {
             $filePath = $file->getRealPath() ?: (string) $file;
             if (! $archive->addFile($filePath, $file->getBasename())) {
-                throw new ExportsException('ZipArchive failed to add a file: ' . $filePath);
+                throw new ExportsException('ZipArchive failed to add a file: ' . $filePath); // @codeCoverageIgnore
             }
         }
 
         if (! $archive->close()) {
-            throw new ExportsException('ZipArchive failed to create the archive');
+            throw new ExportsException('ZipArchive failed to create the archive'); // @codeCoverageIgnore
         }
 
         $this->setFileName('Archive-' . time() . '.zip');
@@ -120,25 +120,31 @@ class ArchiveExporter extends BaseExporter
 
         try {
             $archive = new PharData($path);
+            // @codeCoverageIgnoreStart
         } catch (UnexpectedValueException $e) {
             throw new ExportsException('PharData failed during initialization', $e->getCode(), $e);
         }
+        // @codeCoverageIgnoreEnd
 
         while ($file = $this->getFile()) {
             $filePath = $file->getRealPath() ?: (string) $file;
 
             try {
                 $archive->addFile($filePath);
+                // @codeCoverageIgnoreStart
             } catch (Throwable $e) {
                 throw new ExportsException($e->getMessage(), $e->getCode(), $e);
             }
+            // @codeCoverageIgnoreEnd
         }
 
         try {
             $new = $archive->compress(Phar::GZ);
+            // @codeCoverageIgnoreStart
         } catch (Throwable $e) {
             throw new ExportsException('PharData compression failed', $e->getCode(), $e);
         }
+        // @codeCoverageIgnoreEnd
 
         $this->setFileName('Archive-' . time() . '.tar.gz');
 

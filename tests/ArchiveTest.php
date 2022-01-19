@@ -11,10 +11,10 @@ final class ArchiveTest extends TestCase
 {
     public function testZip()
     {
-        $handler = new ArchiveExporter($this->input);
-        $handler->setFormat('zip');
+        $exporter = new ArchiveExporter($this->input);
+        $exporter->setFormat('zip');
 
-        $response = $handler->process();
+        $response = $exporter->process();
         $result   = $this->getPrivateProperty($response, 'file');
 
         $this->assertInstanceOf(File::class, $result);
@@ -24,10 +24,27 @@ final class ArchiveTest extends TestCase
 
     public function testGZip()
     {
-        $handler = new ArchiveExporter($this->input);
-        $handler->setFormat('gzip');
+        $exporter = new ArchiveExporter($this->input);
+        $exporter->setFormat('gzip');
 
-        $response = $handler->process();
+        $response = $exporter->process();
+        $result   = $this->getPrivateProperty($response, 'file');
+
+        $this->assertInstanceOf(File::class, $result);
+        $this->assertStringContainsString('gzip', $result->getMimeType());
+    }
+
+    public function testFallback()
+    {
+        // Create a fake failure in createZip() to verify it falls back on GZip
+        $exporter = new class ($this->input) extends ArchiveExporter {
+            protected function createZip(): string
+            {
+                throw new RuntimeException('I get knocked down...');
+            }
+        };
+
+        $response = $exporter->process();
         $result   = $this->getPrivateProperty($response, 'file');
 
         $this->assertInstanceOf(File::class, $result);
@@ -36,12 +53,12 @@ final class ArchiveTest extends TestCase
 
     public function testMultipleFiles()
     {
-        $handler = new ArchiveExporter();
+        $exporter = new ArchiveExporter();
 
-        $handler->setFile(SUPPORTPATH . 'assets/image.jpg');
-        $handler->setFile(SUPPORTPATH . 'assets/text.txt');
+        $exporter->setFile(SUPPORTPATH . 'assets/image.jpg');
+        $exporter->setFile(SUPPORTPATH . 'assets/text.txt');
 
-        $response = $handler->process();
+        $response = $exporter->process();
         $result   = $this->getPrivateProperty($response, 'file');
 
         $this->assertInstanceOf(File::class, $result);
