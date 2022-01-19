@@ -1,17 +1,17 @@
 <?php
 
-namespace Tatter\Exports\Exports;
+namespace Tatter\Exports\Exporters;
 
 use CodeIgniter\HTTP\ResponseInterface;
 use Phar;
 use PharData;
-use Tatter\Exports\BaseExport;
+use Tatter\Exports\BaseExporter;
 use Tatter\Exports\Exceptions\ExportsException;
 use Throwable;
 use UnexpectedValueException;
 use ZipArchive;
 
-class ArchiveHandler extends BaseExport
+class ArchiveExporter extends BaseExporter
 {
     /**
      * Archive format to use. "zip", "gzip", or null to detect

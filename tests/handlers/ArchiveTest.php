@@ -1,7 +1,7 @@
 <?php
 
 use CodeIgniter\Files\File;
-use Tatter\Exports\Exports\ArchiveHandler;
+use Tatter\Exports\Exporters\ArchiveExporter;
 use Tests\Support\ExportsTestCase;
 
 /**
@@ -11,7 +11,7 @@ final class ArchiveTest extends ExportsTestCase
 {
     public function testZip()
     {
-        $handler = new ArchiveHandler($this->input);
+        $handler = new ArchiveExporter($this->input);
         $handler->setFormat('zip');
 
         $response = $handler->process();
@@ -24,7 +24,7 @@ final class ArchiveTest extends ExportsTestCase
 
     public function testGZip()
     {
-        $handler = new ArchiveHandler($this->input);
+        $handler = new ArchiveExporter($this->input);
         $handler->setFormat('gzip');
 
         $response = $handler->process();
@@ -36,7 +36,7 @@ final class ArchiveTest extends ExportsTestCase
 
     public function testMultipleFiles()
     {
-        $handler = new ArchiveHandler();
+        $handler = new ArchiveExporter();
 
         $handler->setFile(SUPPORTPATH . 'assets/image.jpg');
         $handler->setFile(SUPPORTPATH . 'assets/text.txt');

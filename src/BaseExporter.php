@@ -11,7 +11,7 @@ use CodeIgniter\HTTP\ResponseInterface;
 use Tatter\Exports\Exceptions\ExportsException;
 use Tatter\Handlers\Interfaces\HandlerInterface;
 
-abstract class BaseExport implements HandlerInterface
+abstract class BaseExporter implements HandlerInterface
 {
     /**
      * Array of Files to export.
@@ -89,6 +89,43 @@ abstract class BaseExport implements HandlerInterface
         $this->response = $response ?? service('response');
     }
 
+    //--------------------------------------------------------------------
+
+    /**
+     * Runs this Export process.
+     */
+    abstract protected function doProcess(): ?ResponseInterface;
+
+    /**
+     * Wrapper for child process method.
+     */
+    public function process(): ?ResponseInterface
+    {
+        if (empty($this->files)) {
+            throw new ExportsException(lang('Exports.noFile'));
+        }
+        $file = reset($this->files);
+
+        // If no file name was specified then set it to the base name
+        $this->fileName ??= $file->getBasename();
+
+        // If no MIME was specified then read it from the file
+        $this->fileMime ??= $file->getMimeType();
+
+        // Trigger an Export event
+        Events::trigger('export', [
+            'handlerId' => static::handlerId(),
+            'handler'   => static::attributes(),
+            'file'      => $file->getRealPath() ?: (string) $file,
+            'fileName'  => $this->fileName,
+            'fileMime'  => $this->fileMime,
+        ]);
+
+        return $this->doProcess();
+    }
+
+    //--------------------------------------------------------------------
+
     /**
      * Gets the next File, shortening the array.
      */
@@ -106,8 +143,6 @@ abstract class BaseExport implements HandlerInterface
     {
         return $this->files;
     }
-
-    //--------------------------------------------------------------------
 
     /**
      * Set the target File, or append a file for bulk handlers.
@@ -152,39 +187,4 @@ abstract class BaseExport implements HandlerInterface
 
         return $this;
     }
-
-    //--------------------------------------------------------------------
-
-    /**
-     * Wrapper for child process method.
-     */
-    public function process(): ?ResponseInterface
-    {
-        if (empty($this->files)) {
-            throw new ExportsException(lang('Exports.noFile'));
-        }
-        $file = reset($this->files);
-
-        // If no file name was specified then set it to the base name
-        $this->fileName ??= $file->getBasename();
-
-        // If no MIME was specified then read it from the file
-        $this->fileMime ??= $file->getMimeType();
-
-        // Trigger an Export event
-        Events::trigger('export', [
-            'handlerId' => static::handlerId(),
-            'handler'   => static::attributes(),
-            'file'      => $file->getRealPath() ?: (string) $file,
-            'fileName'  => $this->fileName,
-            'fileMime'  => $this->fileMime,
-        ]);
-
-        return $this->doProcess();
-    }
-
-    /**
-     * Runs this Export process.
-     */
-    abstract protected function doProcess(): ?ResponseInterface;
 }
