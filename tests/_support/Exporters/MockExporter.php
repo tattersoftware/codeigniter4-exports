@@ -1,11 +1,11 @@
 <?php
 
-namespace Tests\Support\Exports;
+namespace Tests\Support\Exporters;
 
 use CodeIgniter\HTTP\ResponseInterface;
-use Tatter\Exports\BaseExport;
+use Tatter\Exports\BaseExporter;
 
-class MockExport extends BaseExport
+class MockExporter extends BaseExporter
 {
     public static function handlerId(): string
     {

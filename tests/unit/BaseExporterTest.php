@@ -1,17 +1,17 @@
 <?php
 
 use CodeIgniter\Files\File;
-use Tests\Support\Exports\MockExport;
+use Tests\Support\Exporters\MockExporter;
 use Tests\Support\ExportsTestCase;
 
 /**
  * @internal
  */
-final class BaseExportTest extends ExportsTestCase
+final class BaseExporterTest extends ExportsTestCase
 {
     public function testGetFiles()
     {
-        $handler = new MockExport($this->input);
+        $handler = new MockExporter($this->input);
         $result  = $handler->getFiles();
         $this->assertIsArray($result);
         $this->assertCount(1, $result);
@@ -19,7 +19,7 @@ final class BaseExportTest extends ExportsTestCase
 
     public function testConstructSetsFile()
     {
-        $handler = new MockExport($this->input);
+        $handler = new MockExporter($this->input);
         $result  = $handler->getFiles();
 
         $this->assertInstanceOf(File::class, $result[0]);
@@ -27,7 +27,7 @@ final class BaseExportTest extends ExportsTestCase
 
     public function testSetFileSetsFile()
     {
-        $handler = new MockExport();
+        $handler = new MockExporter();
         $handler->setFile($this->input);
 
         $result = $handler->getFiles();
@@ -37,7 +37,7 @@ final class BaseExportTest extends ExportsTestCase
 
     public function testSetFileAcceptsFile()
     {
-        $handler = new MockExport();
+        $handler = new MockExporter();
         $handler->setFile(new File($this->input));
 
         $result = $handler->getFiles();
@@ -49,7 +49,7 @@ final class BaseExportTest extends ExportsTestCase
     {
         $name = 'foo';
 
-        $handler = new MockExport($this->input);
+        $handler = new MockExporter($this->input);
         $handler->setFileName($name);
 
         $result = $this->getPrivateProperty($handler, 'fileName');
@@ -61,7 +61,7 @@ final class BaseExportTest extends ExportsTestCase
     {
         $mime = 'bar';
 
-        $handler = new MockExport($this->input);
+        $handler = new MockExporter($this->input);
         $handler->setFileMime($mime);
 
         $result = $this->getPrivateProperty($handler, 'fileMime');
@@ -71,7 +71,7 @@ final class BaseExportTest extends ExportsTestCase
 
     public function testProcessGuessesName()
     {
-        $handler = new MockExport($this->input);
+        $handler = new MockExporter($this->input);
         $handler->process();
 
         $result = $this->getPrivateProperty($handler, 'fileName');
@@ -81,7 +81,7 @@ final class BaseExportTest extends ExportsTestCase
 
     public function testProcessGuessesMime()
     {
-        $handler = new MockExport($this->input);
+        $handler = new MockExporter($this->input);
         $handler->process();
 
         $result = $this->getPrivateProperty($handler, 'fileMime');
@@ -91,7 +91,7 @@ final class BaseExportTest extends ExportsTestCase
 
     public function testGetFile()
     {
-        $handler = new MockExport($this->input);
+        $handler = new MockExporter($this->input);
         $result  = $handler->getFile();
         $this->assertInstanceOf(File::class, $result);
         $this->assertSame($this->input, (string) $result);

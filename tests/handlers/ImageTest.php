@@ -1,7 +1,7 @@
 <?php
 
 use CodeIgniter\HTTP\ResponseInterface;
-use Tatter\Exports\Exports\ImageHandler;
+use Tatter\Exports\Exporters\ImageExporter;
 use Tests\Support\ExportsTestCase;
 
 /**
@@ -11,7 +11,7 @@ final class ImageTest extends ExportsTestCase
 {
     public function testDirectSetsMime()
     {
-        $handler = new ImageHandler($this->input);
+        $handler = new ImageExporter($this->input);
         $result  = $handler->process();
 
         $this->assertInstanceOf(ResponseInterface::class, $result);

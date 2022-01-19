@@ -1,11 +1,11 @@
 <?php
 
-namespace Tatter\Exports\Exports;
+namespace Tatter\Exports\Exporters;
 
 use CodeIgniter\HTTP\ResponseInterface;
-use Tatter\Exports\BaseExport;
+use Tatter\Exports\BaseExporter;
 
-class DownloadHandler extends BaseExport
+class DownloadExporter extends BaseExporter
 {
     public static function handlerId(): string
     {
