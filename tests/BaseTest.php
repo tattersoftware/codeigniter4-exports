@@ -1,13 +1,14 @@
 <?php
 
 use CodeIgniter\Files\File;
+use Tatter\Exports\Exceptions\ExportsException;
 use Tests\Support\Exporters\MockExporter;
-use Tests\Support\ExportsTestCase;
+use Tests\Support\TestCase;
 
 /**
  * @internal
  */
-final class BaseExporterTest extends ExportsTestCase
+final class BaseTest extends TestCase
 {
     public function testGetFiles()
     {
@@ -67,6 +68,17 @@ final class BaseExporterTest extends ExportsTestCase
         $result = $this->getPrivateProperty($handler, 'fileMime');
 
         $this->assertSame($mime, $result);
+    }
+
+    public function testProcessThrowsNoFiles()
+    {
+        $handler = new MockExporter();
+        $this->assertCount(0, $handler->getFiles());
+
+        $this->expectException(ExportsException::class);
+        $this->expectExceptionMessage('You must specify a file for export');
+
+        $handler->process();
     }
 
     public function testProcessGuessesName()

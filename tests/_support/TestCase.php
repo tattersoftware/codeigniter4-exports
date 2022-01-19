@@ -7,7 +7,7 @@ use CodeIgniter\Test\CIUnitTestCase;
 /**
  * @internal
  */
-abstract class ExportsTestCase extends CIUnitTestCase
+abstract class TestCase extends CIUnitTestCase
 {
     /**
      * Path to the test file

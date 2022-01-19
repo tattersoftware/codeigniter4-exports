@@ -2,12 +2,12 @@
 
 use CodeIgniter\Files\File;
 use Tatter\Exports\Exporters\ArchiveExporter;
-use Tests\Support\ExportsTestCase;
+use Tests\Support\TestCase;
 
 /**
  * @internal
  */
-final class ArchiveTest extends ExportsTestCase
+final class ArchiveTest extends TestCase
 {
     public function testZip()
     {

@@ -1,17 +1,17 @@
 <?php
 
 use CodeIgniter\HTTP\ResponseInterface;
-use Tatter\Exports\Exporters\ImageExporter;
-use Tests\Support\ExportsTestCase;
+use Tatter\Exports\Exporters\PreviewExporter;
+use Tests\Support\TestCase;
 
 /**
  * @internal
  */
-final class ImageTest extends ExportsTestCase
+final class PreviewTest extends TestCase
 {
     public function testDirectSetsMime()
     {
-        $handler = new ImageExporter($this->input);
+        $handler = new PreviewExporter($this->input);
         $result  = $handler->process();
 
         $this->assertInstanceOf(ResponseInterface::class, $result);
