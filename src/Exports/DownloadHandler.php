@@ -7,26 +7,28 @@ use Tatter\Exports\BaseExport;
 
 class DownloadHandler extends BaseExport
 {
-    /**
-     * Attributes for Tatter\Handlers
-     *
-     * @var array<string, mixed>
-     */
-    public $attributes = [
-        'name'       => 'Download',
-        'slug'       => 'download',
-        'icon'       => 'fas fa-file-download',
-        'summary'    => 'Download a file straight from the browser',
-        'extensions' => '*',
-        'ajax'       => false,
-        'direct'     => true,
-        'bulk'       => false,
-    ];
+    public static function handlerId(): string
+    {
+        return 'download';
+    }
+
+    public static function attributes(): array
+    {
+        return [
+            'name'       => 'Download',
+            'icon'       => 'fas fa-file-download',
+            'summary'    => 'Download a file straight from the browser',
+            'extensions' => '*',
+            'ajax'       => false,
+            'direct'     => true,
+            'bulk'       => false,
+        ];
+    }
 
     /**
      * Creates a download response for the browser.
      */
-    protected function _process(): ?ResponseInterface
+    protected function doProcess(): ResponseInterface
     {
         $file = $this->getFile();
         $path = $file->getRealPath() ?: (string) $file;

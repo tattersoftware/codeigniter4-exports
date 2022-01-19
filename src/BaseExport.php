@@ -2,39 +2,17 @@
 
 namespace Tatter\Exports;
 
+use CodeIgniter\Config\Factories;
 use CodeIgniter\Events\Events;
 use CodeIgniter\Files\Exceptions\FileNotFoundException;
 use CodeIgniter\Files\File;
 use CodeIgniter\HTTP\RequestInterface;
 use CodeIgniter\HTTP\ResponseInterface;
 use Tatter\Exports\Exceptions\ExportsException;
-use Tatter\Handlers\BaseHandler;
+use Tatter\Handlers\Interfaces\HandlerInterface;
 
-abstract class BaseExport extends BaseHandler
+abstract class BaseExport implements HandlerInterface
 {
-    /**
-     * Attributes for Tatter\Handlers
-     *
-     * @var array<string, mixed>
-     */
-    public $attributes;
-
-    /**
-     * Default set of attributes
-     *
-     * @var array<string, mixed>
-     */
-    private array $defaults = [
-        'name'       => '',
-        'slug'       => '',
-        'icon'       => 'fas fa-external-link-alt',
-        'summary'    => '',
-        'extensions' => '*',
-        'ajax'       => false,
-        'direct'     => true,
-        'bulk'       => false,
-    ];
-
     /**
      * Array of Files to export.
      *
@@ -71,6 +49,32 @@ abstract class BaseExport extends BaseHandler
     protected $response;
 
     /**
+     * Use Factories-style class basenames to
+     * guesstimate a good handlerId.
+     */
+    public static function handlerId(): string
+    {
+        return str_replace('export', '', strtolower(Factories::getBasename(static::class)));
+    }
+
+    /**
+     * Initial set of attributes, to be overridden
+     * as necessary by child classes.
+     */
+    public static function attributes(): array
+    {
+        return [
+            'name'       => ucfirst(static::handlerId()),
+            'icon'       => 'fas fa-external-link-alt',
+            'summary'    => '',
+            'extensions' => '*',
+            'ajax'       => false,
+            'direct'     => true,
+            'bulk'       => false,
+        ];
+    }
+
+    /**
      * Sets or loads the Request and Response objects.
      *
      * @param File|string|null  $file
@@ -83,9 +87,6 @@ abstract class BaseExport extends BaseHandler
 
         $this->request  = $request ?? service('request');
         $this->response = $response ?? service('response');
-
-        // Merge default attributes to be sure all are present
-        $this->attributes = array_merge($this->defaults, $this->attributes);
     }
 
     /**
@@ -123,7 +124,7 @@ abstract class BaseExport extends BaseHandler
 
         if (null === $file) {
             $this->files = [];
-        } elseif ($this->attributes['bulk']) {
+        } elseif (static::attributes()['bulk']) {
             $this->files[] = $file;
         } else {
             $this->files = [$file];
@@ -172,17 +173,18 @@ abstract class BaseExport extends BaseHandler
 
         // Trigger an Export event
         Events::trigger('export', [
-            'handler'  => $this->toArray(),
-            'file'     => $file->getRealPath() ?: (string) $file,
-            'fileName' => $this->fileName,
-            'fileMime' => $this->fileMime,
+            'handlerId' => static::handlerId(),
+            'handler'   => static::attributes(),
+            'file'      => $file->getRealPath() ?: (string) $file,
+            'fileName'  => $this->fileName,
+            'fileMime'  => $this->fileMime,
         ]);
 
-        return $this->_process();
+        return $this->doProcess();
     }
 
     /**
      * Runs this Export process.
      */
-    abstract protected function _process(): ?ResponseInterface;
+    abstract protected function doProcess(): ?ResponseInterface;
 }

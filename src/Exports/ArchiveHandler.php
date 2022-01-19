@@ -14,27 +14,24 @@ use ZipArchive;
 class ArchiveHandler extends BaseExport
 {
     /**
-     * Attributes for Tatter\Handlers
+     * Archive format to use. "zip", "gzip", or null to detect
      *
-     * @var array<string, mixed>
+     * @var ?string
      */
-    public $attributes = [
-        'name'       => 'Archive',
-        'slug'       => 'archive',
-        'icon'       => 'fas fa-download',
-        'summary'    => 'Archive files and download from the browser',
-        'extensions' => '*',
-        'ajax'       => false,
-        'direct'     => true,
-        'bulk'       => true,
-    ];
+    protected $format;
 
-    /**
-     * Archive format to use. "zip", "gzip", or blank to detect
-     *
-     * @var string
-     */
-    protected $format = '';
+    public static function attributes(): array
+    {
+        return [
+            'name'       => 'Archive',
+            'icon'       => 'fas fa-download',
+            'summary'    => 'Archive files and download from the browser',
+            'extensions' => '*',
+            'ajax'       => false,
+            'direct'     => true,
+            'bulk'       => true,
+        ];
+    }
 
     /**
      * Sets the archive format
@@ -49,11 +46,11 @@ class ArchiveHandler extends BaseExport
     }
 
     /**
-     * Adds files to an archive then passes to DownloadHandler.
+     * Adds files to an archive then creates a Download response.
      *
      * @throws ExportsException If one of the create methods fails
      */
-    protected function _process(): ?ResponseInterface
+    protected function doProcess(): ?ResponseInterface
     {
         if ($this->format === 'gzip') {
             $path = $this->createGZip();

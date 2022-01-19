@@ -7,26 +7,28 @@ use Tatter\Exports\BaseExport;
 
 class ImageHandler extends BaseExport
 {
-    /**
-     * Attributes for Tatter\Handlers
-     *
-     * @var array<string, mixed>
-     */
-    public $attributes = [
-        'name'       => 'Preview',
-        'slug'       => 'preview',
-        'icon'       => 'fas fa-image',
-        'summary'    => 'Open an image in the browser',
-        'extensions' => 'jpg,jpeg,gif,png,pdf,bmp,ico',
-        'ajax'       => true,
-        'direct'     => true,
-        'bulk'       => false,
-    ];
+    public static function handlerId(): string
+    {
+        return 'preview';
+    }
+
+    public static function attributes(): array
+    {
+        return [
+            'name'       => 'Preview',
+            'icon'       => 'fas fa-image',
+            'summary'    => 'Open an image in the browser',
+            'extensions' => 'jpg,jpeg,gif,png,pdf,bmp,ico',
+            'ajax'       => true,
+            'direct'     => true,
+            'bulk'       => false,
+        ];
+    }
 
     /**
      * Checks for AJAX to tag image, otherwise reads out the file directly.
      */
-    protected function _process(): ?ResponseInterface
+    protected function doProcess(): ?ResponseInterface
     {
         return $this->request->isAJAX()
             ? $this->processAJAX()
@@ -54,11 +56,16 @@ class ImageHandler extends BaseExport
     {
         $file = $this->getFile();
         $path = $file->getRealPath() ?: (string) $file;
+        $data = base64_encode(file_get_contents($path));
+        $body = '<a href="' . current_url() . '" target="_blank" style="cursor: zoom-in;">' . PHP_EOL;
 
-        return $this->response->setBody(view('\Tatter\Exports\Views\image', [
-            'fileName' => $this->fileName,
-            'fileMime' => $this->fileMime,
-            'data'     => base64_encode(file_get_contents($path)),
-        ]));
+        if ($this->fileMime === 'application/pdf') {
+            $body .= '<object data="data:application/pdf;base64, ' . $data . '" type="application/pdf"></object>' . PHP_EOL;
+        } else {
+            $body .= '<img src="data:<' . $this->fileMime . ';base64, ' . $data . '" alt="' . $this->fileName . '">' . PHP_EOL;
+        }
+        $body .= '</a>' . PHP_EOL;
+
+        return $this->response->setBody($body);
     }
 }
