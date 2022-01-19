@@ -2,6 +2,7 @@
 
 namespace Tests\Support;
 
+use CodeIgniter\HTTP\IncomingRequest;
 use CodeIgniter\Test\CIUnitTestCase;
 
 /**
@@ -15,4 +16,16 @@ abstract class TestCase extends CIUnitTestCase
      * @var string
      */
     protected $input = SUPPORTPATH . 'assets/image.jpg';
+
+    protected function tearDown(): void
+    {
+        parent::tearDown();
+
+        $this->resetServices();
+    }
+
+    protected function getAjaxRequest(): IncomingRequest
+    {
+        return service('request')->appendHeader('X-Requested-With', 'XMLHttpRequest');
+    }
 }
