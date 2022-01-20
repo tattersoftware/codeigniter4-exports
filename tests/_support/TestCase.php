@@ -12,10 +12,8 @@ abstract class TestCase extends CIUnitTestCase
 {
     /**
      * Path to the test file
-     *
-     * @var string
      */
-    protected $input = SUPPORTPATH . 'assets/image.jpg';
+    protected string $input = SUPPORTPATH . 'assets/image.jpg';
 
     protected function tearDown(): void
     {

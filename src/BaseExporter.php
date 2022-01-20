@@ -22,31 +22,23 @@ abstract class BaseExporter implements HandlerInterface
 
     /**
      * Alternate name to use for the file.
-     *
-     * @var string|null
      */
-    protected $fileName;
+    protected ?string $fileName;
 
     /**
      * Overriding MIME type to use.
-     *
-     * @var string|null
      */
-    protected $fileMime;
+    protected ?string $fileMime;
 
     /**
      * Instance of the main Request object.
-     *
-     * @var RequestInterface
      */
-    protected $request;
+    protected RequestInterface $request;
 
     /**
      * Instance of the main response object.
-     *
-     * @var ResponseInterface
      */
-    protected $response;
+    protected ResponseInterface $response;
 
     /**
      * Use Factories-style class basenames to
