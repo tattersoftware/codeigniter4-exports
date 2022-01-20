@@ -2,7 +2,7 @@
 
 namespace Tatter\Exports\Exporters;
 
-use CodeIgniter\HTTP\ResponseInterface;
+use CodeIgniter\HTTP\DownloadResponse;
 use Tatter\Exports\BaseExporter;
 
 class DownloadExporter extends BaseExporter
@@ -28,7 +28,7 @@ class DownloadExporter extends BaseExporter
     /**
      * Creates a download response for the browser.
      */
-    protected function doProcess(): ResponseInterface
+    protected function doProcess(): DownloadResponse
     {
         $file = $this->getFile();
         $path = $file->getRealPath() ?: (string) $file;

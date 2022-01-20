@@ -5,7 +5,7 @@ namespace Tatter\Exports\Exporters;
 use CodeIgniter\HTTP\ResponseInterface;
 use Tatter\Exports\BaseExporter;
 
-class ImageExporter extends BaseExporter
+class PreviewExporter extends BaseExporter
 {
     public static function handlerId(): string
     {
@@ -17,7 +17,7 @@ class ImageExporter extends BaseExporter
         return [
             'name'       => 'Preview',
             'icon'       => 'fas fa-image',
-            'summary'    => 'Open an image in the browser',
+            'summary'    => 'Previews an image in the browser',
             'extensions' => 'jpg,jpeg,gif,png,pdf,bmp,ico',
             'ajax'       => true,
             'direct'     => true,

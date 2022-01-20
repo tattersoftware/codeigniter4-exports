@@ -102,7 +102,7 @@ abstract class BaseExporter implements HandlerInterface
     public function process(): ?ResponseInterface
     {
         if (empty($this->files)) {
-            throw new ExportsException(lang('Exports.noFile'));
+            throw new ExportsException(lang('Exports.noFiles'));
         }
         $file = reset($this->files);
 

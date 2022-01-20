@@ -52,9 +52,6 @@
     "minimum-stability": "dev",
     "prefer-stable": true,
     "scripts": {
-        "post-update-cmd": [
-            "composer dump-autoload"
-        ],
         "analyze": "phpstan analyze",
         "ci": [
             "Composer\\Config::disableProcessTimeout",
@@ -62,8 +59,8 @@
             "@analyze",
             "@test",
             "@inspect",
-            "@style",
-            "rector process"
+            "rector process",
+            "@style"
         ],
         "deduplicate": "phpcpd app/ src/",
         "inspect": "deptrac analyze --cache-file=build/deptrac.cache",

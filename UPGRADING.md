@@ -11,3 +11,4 @@ for that library as well.
 
 * Export handlers have been dubbed "Exporters" to differentiate them from the library; adjust any class extensions appropriately
 * The interface method has been renamed `doProcess()` to move away from legacy underscore methods
+* The "Image Preview Exporter" class has been renamed `PreviewExporter` to be consistent with its name and ID

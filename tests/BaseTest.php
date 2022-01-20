@@ -1,14 +1,31 @@
 <?php
 
 use CodeIgniter\Files\File;
+use CodeIgniter\HTTP\ResponseInterface;
+use Tatter\Exports\BaseExporter;
+use Tatter\Exports\Exceptions\ExportsException;
 use Tests\Support\Exporters\MockExporter;
-use Tests\Support\ExportsTestCase;
+use Tests\Support\TestCase;
 
 /**
  * @internal
  */
-final class BaseExporterTest extends ExportsTestCase
+final class BaseTest extends TestCase
 {
+    public function testHasBasicAttributes()
+    {
+        $exporter = new class () extends BaseExporter {
+            protected function doProcess(): ?ResponseInterface
+            {
+                return null;
+            }
+        };
+
+        $result = $exporter::attributes();
+
+        $this->assertSame('fas fa-external-link-alt', $result['icon']);
+    }
+
     public function testGetFiles()
     {
         $handler = new MockExporter($this->input);
@@ -67,6 +84,17 @@ final class BaseExporterTest extends ExportsTestCase
         $result = $this->getPrivateProperty($handler, 'fileMime');
 
         $this->assertSame($mime, $result);
+    }
+
+    public function testProcessThrowsNoFiles()
+    {
+        $handler = new MockExporter();
+        $this->assertCount(0, $handler->getFiles());
+
+        $this->expectException(ExportsException::class);
+        $this->expectExceptionMessage(lang('Exports.noFiles'));
+
+        $handler->process();
     }
 
     public function testProcessGuessesName()
