@@ -28,7 +28,7 @@ class MockExporter extends BaseExporter
     /**
      * Blindly does nothing.
      */
-    protected function doProcess(): ?ResponseInterface
+    protected function doProcess(): ResponseInterface
     {
         return $this->response;
     }

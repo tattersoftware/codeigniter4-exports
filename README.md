@@ -16,7 +16,7 @@ Modular file exports, for CodeIgniter 4
 
 **Exports** defines small classes that can be used to direct files to various destinations.
 Each class is a handler that extends `Tatter\Handlers\BaseHandler` and has a distinct set
-of `$attributes` (see `Tatter\Handlers`) and its own `_process()` method to do the actual
+of attributes (see `Tatter\Handlers`) and its own `doProcess()` method to do the actual
 export. Think of an export as something you might see on a "share menu" from a mobile device:
 any supported destination for a certain file type.
 
@@ -25,7 +25,7 @@ any supported destination for a certain file type.
 Install easily via Composer to take advantage of CodeIgniter 4's autoloading capabilities
 and always be up-to-date:
 ```bash
-composer require tatter/permits
+composer require tatter/exports
 ```
 
 Or, install manually by downloading the source files and adding the directory to
@@ -33,43 +33,44 @@ Or, install manually by downloading the source files and adding the directory to
 
 ## Usage
 
-You may load Export handlers directly, or use the `Handlers` service to locate them based
+You may load Export handlers directly, or use the `ExportersFactory` to locate them based
 on their attributes:
-```
-	// Loaded directly
-	$handler = new \Tatter\Exports\Exports\DownloadHandler($myFile);`
+```php
+// Loaded directly
+$handler = new \Tatter\Exports\Exporters\DownloadExporter($myFile);`
 
-	// Located by Handlers
-	$class = service('handlers')
-		->setPath('Exports')
-		->where(['extensions has' => 'pdf'])
-		->first();
-	$handler = new $class($myFile);
+// Located by Handlers
+$exporters = new \Tatter\Exports\ExporterFactory();
+$class     = $exporters->where(['extensions has' => 'pdf'])->first();
+$exporter  = new $class($myFile);
 ```
 
 Every handler supports basic setters to provide your file and optional overrides for file
 metadata:
-```
-	$handler->setPath('/path/to/file');
-	// or...
-	$file = new \CodeIgniter\Files\File('/path/to/file');
-	$handler->setPath($file);
+```php
+$exporter->setPath('/path/to/file');
+// or...
+$file = new \CodeIgniter\Files\File('/path/to/file');
+$exporter->setPath($file);
 
-	$handler->setFileName('RenameFileDuringExport.bam');
-	$handler->setFileMime('overriding/mimetype');
+$exporter->setFileName('RenameFileDuringExport.bam');
+$exporter->setFileMime('overriding/mimetype');
 ```
 
 To execute the export, call its `process()` method, which will return a `ResponseInterface`
 (or in some cases `null`):
-```
-	class MyController
-	{
-		public function sendFile($path)
-		{
-			helper('handlers');
-			$handler = handlers('Exports')->find('DownloadHandler');
-			
-			return $handler->setFile($path)->process();
-		}
-	}
+```php
+use Tatter\Exports\ExporterFactory;
+
+class MyController
+{
+    public function sendFile($path)
+    {
+        $exporters = new ExporterFactory();
+        $class     = $exporters->find('download');
+        $exporter  = new $class();
+
+        return $exporter->setFile($path)->process();
+    }
+}
 ```

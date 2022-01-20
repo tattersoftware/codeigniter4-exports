@@ -22,31 +22,23 @@ abstract class BaseExporter implements HandlerInterface
 
     /**
      * Alternate name to use for the file.
-     *
-     * @var string|null
      */
-    protected $fileName;
+    protected ?string $fileName = null;
 
     /**
      * Overriding MIME type to use.
-     *
-     * @var string|null
      */
-    protected $fileMime;
+    protected ?string $fileMime = null;
 
     /**
      * Instance of the main Request object.
-     *
-     * @var RequestInterface
      */
-    protected $request;
+    protected RequestInterface $request;
 
     /**
      * Instance of the main response object.
-     *
-     * @var ResponseInterface
      */
-    protected $response;
+    protected ResponseInterface $response;
 
     /**
      * Use Factories-style class basenames to
@@ -58,21 +50,19 @@ abstract class BaseExporter implements HandlerInterface
     }
 
     /**
-     * Initial set of attributes, to be overridden
-     * as necessary by child classes.
+     * Returns the array of attributes.
+     * Must include the following keys:
+     * - name       [string] Displayable name for the handler
+     * - icon       [string] FontAwesome-style icon class
+     * - summary    [string] Brief description of the handler
+     * - extensions [string] CSV of supported extentions, * for all
+     * - ajax       [bool]   Whether AJAX calls are supported
+     * - direct     [bool]   Whether non-AJAX calls are supported
+     * - bulk       [bool]   Whether multiple files are supported
+     *
+     * @return array<string, scalar>
      */
-    public static function attributes(): array
-    {
-        return [
-            'name'       => ucfirst(static::handlerId()),
-            'icon'       => 'fas fa-external-link-alt',
-            'summary'    => '',
-            'extensions' => '*',
-            'ajax'       => false,
-            'direct'     => true,
-            'bulk'       => false,
-        ];
-    }
+    abstract public static function attributes(): array;
 
     /**
      * Sets or loads the Request and Response objects.
@@ -94,12 +84,12 @@ abstract class BaseExporter implements HandlerInterface
     /**
      * Runs this Export process.
      */
-    abstract protected function doProcess(): ?ResponseInterface;
+    abstract protected function doProcess(): ResponseInterface;
 
     /**
      * Wrapper for child process method.
      */
-    public function process(): ?ResponseInterface
+    public function process(): ResponseInterface
     {
         if (empty($this->files)) {
             throw new ExportsException(lang('Exports.noFiles'));
@@ -116,7 +106,7 @@ abstract class BaseExporter implements HandlerInterface
         Events::trigger('export', [
             'handlerId' => static::handlerId(),
             'handler'   => static::attributes(),
-            'file'      => $file->getRealPath() ?: (string) $file,
+            'files'     => $file->getRealPath() ?: (string) $file,
             'fileName'  => $this->fileName,
             'fileMime'  => $this->fileMime,
         ]);
