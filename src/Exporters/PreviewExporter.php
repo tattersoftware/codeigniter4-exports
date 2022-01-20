@@ -28,7 +28,7 @@ class PreviewExporter extends BaseExporter
     /**
      * Checks for AJAX to tag image, otherwise reads out the file directly.
      */
-    protected function doProcess(): ?ResponseInterface
+    protected function doProcess(): ResponseInterface
     {
         return $this->request->isAJAX()
             ? $this->processAJAX()

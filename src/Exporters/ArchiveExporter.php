@@ -50,7 +50,7 @@ class ArchiveExporter extends BaseExporter
      *
      * @throws ExportsException If one of the create methods fails
      */
-    protected function doProcess(): ?ResponseInterface
+    protected function doProcess(): ResponseInterface
     {
         if ($this->format === 'gzip') {
             $path = $this->createGZip();
