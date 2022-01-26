@@ -46,7 +46,7 @@ abstract class BaseExporter implements HandlerInterface
      */
     public static function handlerId(): string
     {
-        return str_replace('export', '', strtolower(Factories::getBasename(static::class)));
+        return str_replace('exporter', '', strtolower(Factories::getBasename(static::class)));
     }
 
     /**
