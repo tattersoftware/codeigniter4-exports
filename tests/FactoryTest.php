@@ -26,4 +26,23 @@ final class FactoryTest extends TestCase
 
         $this->assertSame($expected, $result);
     }
+
+    public function testGetAttributesForExtension()
+    {
+        $factory = new ExporterFactory();
+
+        $result = $factory->getAttributesForExtension('jpg');
+        $this->assertCount(4, $result);
+        $this->assertSame(
+            ['preview', 'archive', 'download', 'mock'],
+            array_column($result, 'id'),
+        );
+
+        $result = $factory->getAttributesForExtension('app');
+        $this->assertCount(3, $result);
+        $this->assertSame(
+            ['archive', 'download', 'mock'],
+            array_column($result, 'id'),
+        );
+    }
 }

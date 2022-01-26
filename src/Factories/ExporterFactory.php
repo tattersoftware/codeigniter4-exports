@@ -25,4 +25,28 @@ class ExporterFactory extends BaseFactory
     {
         return 'Exporters';
     }
+
+    /**
+     * Returns attributes for all Exporters that support the given extension.
+     *
+     * @return array<string, scalar>[]
+     */
+    public function getAttributesForExtension(string $extension): array
+    {
+        // Always return extension-specific handlers first
+        $exporters = array_merge(
+            $this->where(['extensions has' => $extension])->findAll(),
+            $this->where(['extensions' => '*'])->findAll()
+        );
+
+        // Gather each set of attributes
+        $result = [];
+
+        foreach ($exporters as $exporter) {
+            $handlerId = $exporter::handlerId();
+            $result[]  = $this->getAttributes($handlerId);
+        }
+
+        return $result;
+    }
 }
