@@ -2,17 +2,17 @@
 
 namespace Tatter\Exports;
 
-use CodeIgniter\Config\Factories;
 use CodeIgniter\Events\Events;
 use CodeIgniter\Files\Exceptions\FileNotFoundException;
 use CodeIgniter\Files\File;
 use CodeIgniter\HTTP\RequestInterface;
 use CodeIgniter\HTTP\ResponseInterface;
 use Tatter\Exports\Exceptions\ExportsException;
-use Tatter\Handlers\Interfaces\HandlerInterface;
 
-abstract class BaseExporter implements HandlerInterface
+abstract class BaseExporter
 {
+    public const HANDLER_ID = '';
+
     /**
      * Array of Files to export.
      *
@@ -41,28 +41,34 @@ abstract class BaseExporter implements HandlerInterface
     protected ResponseInterface $response;
 
     /**
-     * Use Factories-style class basenames to
-     * guesstimate a good handlerId.
+     * Returns the array of attributes.
+     *
+     * @return array<string, mixed>
      */
-    public static function handlerId(): string
+    final public static function attributes(): array
     {
-        return str_replace('exporter', '', strtolower(Factories::getBasename(static::class)));
+        $attributes = static::getAttributes();
+
+        $attributes['id']    = static::HANDLER_ID;
+        $attributes['class'] = static::class;
+
+        return $attributes;
     }
 
     /**
      * Returns the array of attributes.
      * Must include the following keys:
-     * - name       [string] Displayable name for the handler
-     * - icon       [string] FontAwesome-style icon class
-     * - summary    [string] Brief description of the handler
-     * - extensions [string] CSV of supported extentions, * for all
-     * - ajax       [bool]   Whether AJAX calls are supported
-     * - direct     [bool]   Whether non-AJAX calls are supported
-     * - bulk       [bool]   Whether multiple files are supported
+     * - name       string   Displayable name for the handler
+     * - icon       string   FontAwesome-style icon class
+     * - summary    string   Brief description of the handler
+     * - ajax       bool     Whether AJAX calls are supported
+     * - direct     bool     Whether non-AJAX calls are supported
+     * - bulk       bool     Whether multiple files are supported
+     * - extensions string[] CSV of supported extentions, * for all
      *
-     * @return array<string, scalar>
+     * @return array<string, mixed>
      */
-    abstract public static function attributes(): array;
+    abstract protected static function getAttributes(): array;
 
     /**
      * Sets or loads the Request and Response objects.
@@ -104,11 +110,10 @@ abstract class BaseExporter implements HandlerInterface
 
         // Trigger an Export event
         Events::trigger('export', [
-            'handlerId' => static::handlerId(),
-            'handler'   => static::attributes(),
-            'files'     => $file->getRealPath() ?: (string) $file,
-            'fileName'  => $this->fileName,
-            'fileMime'  => $this->fileMime,
+            'handler'  => static::attributes(),
+            'files'    => $file->getRealPath() ?: (string) $file,
+            'fileName' => $this->fileName,
+            'fileMime' => $this->fileMime,
         ]);
 
         return $this->doProcess();
@@ -135,7 +140,7 @@ abstract class BaseExporter implements HandlerInterface
     }
 
     /**
-     * Set the target File, or append a file for bulk handlers.
+     * Set the target File, or append a file for bulk exporters.
      *
      * @param File|string|null $file The File or path to export, null to reset
      *

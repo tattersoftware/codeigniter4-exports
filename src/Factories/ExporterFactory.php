@@ -10,43 +10,35 @@ use Tatter\Handlers\BaseFactory;
  *
  * Used to discover all compatible Exporters.
  *
- * @method class-string<BaseExporter>|null   find(string $handlerId)
- * @method class-string<BaseExporter>[]|null findAll()
- * @method class-string<BaseExporter>|null   first()
+ * @method static class-string<BaseExporter>   find(string $id)
+ * @method static class-string<BaseExporter>[] findAll()
  */
-class ExporterFactory extends BaseFactory
+final class ExporterFactory extends BaseFactory
 {
-    public const RETURN_TYPE = BaseExporter::class;
+    public const HANDLER_PATH = 'Exporters';
+    public const HANDLER_TYPE = BaseExporter::class;
 
     /**
-     * Returns the search path.
-     */
-    public function getPath(): string
-    {
-        return 'Exporters';
-    }
-
-    /**
-     * Returns attributes for all Exporters that support the given extension.
+     * Gathers attributes for all Exporters that support the given extension.
      *
      * @return array<string, scalar>[]
      */
-    public function getAttributesForExtension(string $extension): array
+    public static function getAttributesForExtension(string $extension): array
     {
-        // Always return extension-specific handlers first
-        $exporters = array_merge(
-            $this->where(['extensions has' => $extension])->findAll(),
-            $this->where(['extensions' => '*'])->findAll()
-        );
+        $specific  = [];
+        $universal = [];
 
-        // Gather each set of attributes
-        $result = [];
+        foreach (self::findAll() as $exporter) {
+            $attributes = $exporter::attributes();
 
-        foreach ($exporters as $exporter) {
-            $handlerId = $exporter::handlerId();
-            $result[]  = $this->getAttributes($handlerId);
+            if (in_array($extension, $attributes['extensions'], true)) {
+                $specific[] = $attributes;
+            } elseif ($attributes['extensions'] === ['*']) {
+                $universal[] = $attributes;
+            }
         }
 
-        return $result;
+        // Always return extension-specific handlers first
+        return [...$specific, ...$universal];
     }
 }

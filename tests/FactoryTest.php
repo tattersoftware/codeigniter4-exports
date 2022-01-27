@@ -13,12 +13,12 @@ final class FactoryTest extends TestCase
 {
     public function testDiscovers()
     {
-        // Discovery is alphabetical by handlerId
+        // Discovery is alphabetical by handler ID
         $expected = [
-            ArchiveExporter::class,
-            DownloadExporter::class,
-            MockExporter::class,
-            PreviewExporter::class,
+            'archive'  => ArchiveExporter::class,
+            'download' => DownloadExporter::class,
+            'mock'     => MockExporter::class,
+            'preview'  => PreviewExporter::class,
         ];
 
         $factory = new ExporterFactory();
