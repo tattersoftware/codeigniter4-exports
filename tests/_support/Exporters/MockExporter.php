@@ -7,21 +7,18 @@ use Tatter\Exports\BaseExporter;
 
 class MockExporter extends BaseExporter
 {
-    public static function handlerId(): string
-    {
-        return 'mock';
-    }
+    public const HANDLER_ID = 'mock';
 
-    public static function attributes(): array
+    protected static function getAttributes(): array
     {
         return [
             'name'       => 'Mock',
             'icon'       => 'fas fa-flask',
             'summary'    => 'Mock export handler',
-            'extensions' => '*',
             'ajax'       => true,
             'direct'     => true,
             'bulk'       => true,
+            'extensions' => ['*'],
         ];
     }
 

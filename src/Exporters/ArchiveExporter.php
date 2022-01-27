@@ -13,6 +13,8 @@ use ZipArchive;
 
 class ArchiveExporter extends BaseExporter
 {
+    public const HANDLER_ID = 'archive';
+
     /**
      * Archive format to use. "zip", "gzip", or null to detect
      *
@@ -20,16 +22,16 @@ class ArchiveExporter extends BaseExporter
      */
     protected $format;
 
-    public static function attributes(): array
+    protected static function getAttributes(): array
     {
         return [
             'name'       => 'Archive',
             'icon'       => 'fas fa-download',
             'summary'    => 'Archive files and download from the browser',
-            'extensions' => '*',
             'ajax'       => false,
             'direct'     => true,
             'bulk'       => true,
+            'extensions' => ['*'],
         ];
     }
 

@@ -7,21 +7,18 @@ use Tatter\Exports\BaseExporter;
 
 class DownloadExporter extends BaseExporter
 {
-    public static function handlerId(): string
-    {
-        return 'download';
-    }
+    public const HANDLER_ID = 'download';
 
-    public static function attributes(): array
+    protected static function getAttributes(): array
     {
         return [
             'name'       => 'Download',
             'icon'       => 'fas fa-file-download',
             'summary'    => 'Download a file straight from the browser',
-            'extensions' => '*',
             'ajax'       => false,
             'direct'     => true,
             'bulk'       => false,
+            'extensions' => ['*'],
         ];
     }
 

@@ -7,21 +7,18 @@ use Tatter\Exports\BaseExporter;
 
 class PreviewExporter extends BaseExporter
 {
-    public static function handlerId(): string
-    {
-        return 'preview';
-    }
+    public const HANDLER_ID = 'preview';
 
-    public static function attributes(): array
+    protected static function getAttributes(): array
     {
         return [
             'name'       => 'Preview',
             'icon'       => 'fas fa-image',
             'summary'    => 'Previews an image in the browser',
-            'extensions' => 'jpg,jpeg,gif,png,pdf,bmp,ico',
             'ajax'       => true,
             'direct'     => true,
             'bulk'       => false,
+            'extensions' => ['jpg', 'jpeg', 'gif', 'png', 'pdf', 'bmp', 'ico'],
         ];
     }
 
