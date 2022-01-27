@@ -15,10 +15,9 @@ Modular file exports, for CodeIgniter 4
 ## Description
 
 **Exports** defines small classes that can be used to direct files to various destinations.
-Each class is a handler that extends `Tatter\Handlers\BaseHandler` and has a distinct set
-of attributes (see `Tatter\Handlers`) and its own `doProcess()` method to do the actual
-export. Think of an export as something you might see on a "share menu" from a mobile device:
-any supported destination for a certain file type.
+Each class is a handler discoverable by `Tatter\Handlers` with a distinct set of attributes
+and its own `doProcess()` method to do the actual export. Think of an export as something
+you might see on a "share menu" from a mobile device: supported destinations for a file type.
 
 ## Installation
 
@@ -40,35 +39,32 @@ on their attributes:
 $handler = new \Tatter\Exports\Exporters\DownloadExporter($myFile);`
 
 // Located by Handlers
-$exporters = new \Tatter\Exports\ExporterFactory();
-$class     = $exporters->where(['extensions has' => 'pdf'])->first();
-$exporter  = new $class($myFile);
+$class    = ExporterFactory::find('download');
+$exporter = new $class($myFile);
 ```
 
 Every handler supports basic setters to provide your file and optional overrides for file
 metadata:
 ```php
-$exporter->setPath('/path/to/file');
+$exporter->setFile('/path/to/file');
 // or...
 $file = new \CodeIgniter\Files\File('/path/to/file');
-$exporter->setPath($file);
+$exporter->setFile($file);
 
 $exporter->setFileName('RenameFileDuringExport.bam');
 $exporter->setFileMime('overriding/mimetype');
 ```
 
-To execute the export, call its `process()` method, which will return a `ResponseInterface`
-(or in some cases `null`):
+To execute the export, call its `process()` method, which will return a `ResponseInterface`:
 ```php
 use Tatter\Exports\ExporterFactory;
 
 class MyController
 {
-    public function sendFile($path)
+    public function previewFile($path)
     {
-        $exporters = new ExporterFactory();
-        $class     = $exporters->find('download');
-        $exporter  = new $class();
+        $class    = ExporterFactory::find('preview');
+        $exporter = new $class();
 
         return $exporter->setFile($path)->process();
     }
